@@ -1,15 +1,16 @@
 import { useState } from 'react'
 import { useDemo } from '../state/DemoContext'
-import { getBed, outstandingWork } from '../state/selectors'
+import { contextLabelFor, outstandingWork } from '../state/selectors'
 import { AppShell } from '../components/AppShell'
 import { SectionHeader } from '../components/SectionHeader'
 import { HandoverSummary } from '../components/HandoverSummary'
 import { PrimaryButton } from '../components/PrimaryButton'
 
 export function HandoverScreen() {
-  const { data, goBack, goTab } = useDemo()
+  const { data, goBack, goTab, goTeamTab, persona } = useDemo()
   const [reviewed, setReviewed] = useState(false)
-  const outstanding = outstandingWork(data).map((w) => ({ bedLabel: getBed(data, w.bedId).label, title: w.title }))
+  const backToTeam = () => (persona === 'ama' ? goTeamTab('teamPeople') : goTab('team'))
+  const outstanding = outstandingWork(data).map((w) => ({ bedLabel: contextLabelFor(data, w), title: w.title }))
 
   return (
     <AppShell title="Handover" onBack={goBack}>
@@ -29,7 +30,7 @@ export function HandoverScreen() {
       {reviewed ? (
         <>
           <div className="handover-reviewed">✓ Reviewed and ready for the next shift</div>
-          <PrimaryButton onClick={() => goTab('team')}>Back to Team</PrimaryButton>
+          <PrimaryButton onClick={backToTeam}>Back to Team</PrimaryButton>
         </>
       ) : (
         <PrimaryButton onClick={() => setReviewed(true)}>Review & finalize</PrimaryButton>

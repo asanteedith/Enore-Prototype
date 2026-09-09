@@ -645,7 +645,14 @@
   flex-shrink: 0;
 }
 
-.frame-reset {
+.frame-controls {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.frame-reset,
+.frame-switch-role {
   background: transparent;
   border: none;
   color: var(--color-text-inverse);
@@ -656,6 +663,7 @@
   padding: 6px 10px;
 }
 
-.frame-reset:hover {
+.frame-reset:hover,
+.frame-switch-role:hover {
   opacity: 0.85;
 }

@@ -1,11 +1,13 @@
 import type { ReactNode } from 'react'
 
-type Kind = 'wardUpdate' | 'handover' | 'escalation'
+type Kind = 'wardUpdate' | 'handover' | 'escalation' | 'meeting' | 'followUp'
 
 const KIND_LABEL: Record<Kind, string> = {
   wardUpdate: 'Ward update',
   handover: 'Handover',
   escalation: 'Escalation',
+  meeting: 'Meeting',
+  followUp: 'Follow-up',
 }
 
 interface Props {

@@ -1,5 +1,6 @@
 import './styles/components.css'
 import './styles/screens.css'
+import './styles/team.css'
 import { DemoProvider, useDemo } from './state/DemoContext'
 import { MobileFrame } from './components/MobileFrame'
 import { StartScreen } from './screens/StartScreen'
@@ -14,9 +15,16 @@ import { TeamScreen } from './screens/TeamScreen'
 import { HandoverScreen } from './screens/HandoverScreen'
 import { WorkflowAgentScreen } from './screens/WorkflowAgentScreen'
 import { ClinicalKnowledgeScreen } from './screens/ClinicalKnowledgeScreen'
+import { JoinTeamScreen } from './screens/JoinTeamScreen'
+import { TeamHomeScreen } from './screens/TeamHomeScreen'
+import { TeamWorkScreen } from './screens/TeamWorkScreen'
+import { TeamContextsScreen } from './screens/TeamContextsScreen'
+import { TeamContextDetailScreen } from './screens/TeamContextDetailScreen'
+import { TeamPeopleScreen } from './screens/TeamPeopleScreen'
+import { TeamMeetingsScreen } from './screens/TeamMeetingsScreen'
 
 function DemoRouter() {
-  const { screen, reset } = useDemo()
+  const { screen, reset, persona, selectPersona } = useDemo()
 
   let content
   switch (screen.name) {
@@ -51,14 +59,46 @@ function DemoRouter() {
       content = <HandoverScreen />
       break
     case 'workflowAgent':
-      content = <WorkflowAgentScreen />
+      content = <WorkflowAgentScreen teamMode={screen.teamMode} />
       break
     case 'clinicalKnowledge':
       content = <ClinicalKnowledgeScreen />
       break
+    case 'joinTeam':
+      content = <JoinTeamScreen />
+      break
+    case 'teamHome':
+      content = <TeamHomeScreen />
+      break
+    case 'teamWork':
+      content = <TeamWorkScreen />
+      break
+    case 'teamContexts':
+      content = <TeamContextsScreen />
+      break
+    case 'teamContextDetail':
+      content = <TeamContextDetailScreen contextId={screen.contextId} />
+      break
+    case 'teamPeople':
+      content = <TeamPeopleScreen />
+      break
+    case 'teamMeetings':
+      content = <TeamMeetingsScreen />
+      break
   }
 
-  return <MobileFrame onReset={reset}>{content}</MobileFrame>
+  const showSwitchRole = screen.name !== 'start' && screen.name !== 'joinTeam'
+  const otherPersona = persona === 'edith' ? 'ama' : 'edith'
+
+  return (
+    <MobileFrame
+      onReset={reset}
+      onSwitchRole={showSwitchRole ? () => selectPersona(otherPersona) : undefined}
+      switchRoleLabel={otherPersona === 'ama' ? 'Switch to Ama (Nurse In-Charge)' : 'Switch to Edith (Staff Nurse)'}
+    >
+      {content}
+    </MobileFrame>
+  )
 }
 
 function App() {

@@ -3,9 +3,11 @@ import type { ReactNode } from 'react'
 interface Props {
   children: ReactNode
   onReset: () => void
+  switchRoleLabel?: string
+  onSwitchRole?: () => void
 }
 
-export function MobileFrame({ children, onReset }: Props) {
+export function MobileFrame({ children, onReset, switchRoleLabel, onSwitchRole }: Props) {
   return (
     <div className="frame-viewport">
       <div className="frame-device">
@@ -16,9 +18,16 @@ export function MobileFrame({ children, onReset }: Props) {
         <div className="frame-screen">{children}</div>
         <div className="frame-home-indicator" />
       </div>
-      <button className="frame-reset" onClick={onReset} type="button">
-        Reset demo
-      </button>
+      <div className="frame-controls">
+        {onSwitchRole && (
+          <button className="frame-switch-role" onClick={onSwitchRole} type="button">
+            {switchRoleLabel}
+          </button>
+        )}
+        <button className="frame-reset" onClick={onReset} type="button">
+          Reset demo
+        </button>
+      </div>
     </div>
   )
 }

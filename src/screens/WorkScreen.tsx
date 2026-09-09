@@ -1,5 +1,5 @@
 import { useDemo } from '../state/DemoContext'
-import { getBed, isJustUpdated, needsAttention } from '../state/selectors'
+import { contextLabelFor, isJustUpdated, needsAttention } from '../state/selectors'
 import { AppShell } from '../components/AppShell'
 import { BottomNavigation } from '../components/BottomNavigation'
 import { SectionHeader } from '../components/SectionHeader'
@@ -20,7 +20,8 @@ export function WorkScreen() {
 
       <div className="work-list">
         {data.work.map((item) => {
-          const bed = getBed(data, item.bedId)
+          const label = contextLabelFor(data, item)
+          const bedId = item.bedId
           const meta =
             item.status === 'TO_DO'
               ? item.dueLabel
@@ -31,12 +32,12 @@ export function WorkScreen() {
           return (
             <WorkItemRow
               key={item.id}
-              bedLabel={bed.label}
+              bedLabel={label}
               title={item.title}
               status={item.status}
               meta={meta}
               justUpdated={isJustUpdated(data, item.id)}
-              onClick={() => push({ name: 'careContext', bedId: item.bedId })}
+              onClick={bedId ? () => push({ name: 'careContext', bedId }) : undefined}
             />
           )
         })}

@@ -1,5 +1,5 @@
 import { useDemo } from '../state/DemoContext'
-import { getBed, needsAttention } from '../state/selectors'
+import { contextLabelFor, needsAttention } from '../state/selectors'
 import { AppShell } from '../components/AppShell'
 import { BottomNavigation } from '../components/BottomNavigation'
 import { SectionHeader } from '../components/SectionHeader'
@@ -30,16 +30,21 @@ export function NowScreen() {
 
       <div className="now-focus-list">
         {focus.map((item) => {
-          const bed = getBed(data, item.bedId)
+          const label = contextLabelFor(data, item)
+          const bedId = item.bedId
           const meta =
             item.status === 'TO_DO'
               ? `${item.dueLabel} · ${item.assignedTo ? `Assigned to ${item.assignedTo}` : 'Unassigned'}`
               : `${item.dueLabel} · Assigned to ${item.assignedTo === data.nurseName ? 'you' : item.assignedTo}`
 
           return (
-            <button key={item.id} className="now-focus-card" onClick={() => push({ name: 'careContext', bedId: item.bedId })}>
+            <button
+              key={item.id}
+              className="now-focus-card"
+              onClick={() => bedId && push({ name: 'careContext', bedId })}
+            >
               <div className="now-focus-card-top">
-                <span className="now-focus-bed">{bed.label}</span>
+                <span className="now-focus-bed">{label}</span>
                 {item.status === 'TO_DO' && !item.assignedTo && <span className="now-focus-cta">Start</span>}
               </div>
               <div className="now-focus-title">{item.title}</div>

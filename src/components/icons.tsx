@@ -91,6 +91,27 @@ export function SendIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+export function ContextsIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Base {...props}>
+      <rect x="3.5" y="4.5" width="7" height="7" rx="1.6" />
+      <rect x="13.5" y="4.5" width="7" height="7" rx="1.6" />
+      <rect x="3.5" y="14.5" width="7" height="5" rx="1.6" />
+      <rect x="13.5" y="14.5" width="7" height="5" rx="1.6" />
+    </Base>
+  )
+}
+
+export function MeetingIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Base {...props}>
+      <rect x="4" y="5" width="16" height="14" rx="2.2" />
+      <path d="M4 9.5h16" />
+      <path d="M8 3v3M16 3v3" />
+    </Base>
+  )
+}
+
 export function KnowledgeIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <Base {...props}>

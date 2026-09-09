@@ -1,5 +1,5 @@
 import { useDemo } from '../state/DemoContext'
-import { getBed, getWork } from '../state/selectors'
+import { contextLabelFor, getWork } from '../state/selectors'
 import { AppShell } from '../components/AppShell'
 import { BottomNavigation } from '../components/BottomNavigation'
 import { SectionHeader } from '../components/SectionHeader'
@@ -8,12 +8,12 @@ import { TeamUpdate } from '../components/TeamUpdate'
 export function TeamScreen() {
   const { data, push, goTab, openQuickCapture } = useDemo()
 
-  const wardUpdates = data.work.filter((w) => w.status === 'IN_PROGRESS')
+  const wardUpdates = data.work.filter((w) => w.status === 'IN_PROGRESS' && !w.waitingOn && w.bedId)
   const escalation = data.work.find((w) => w.id === 'w3')
-  const escalationBed = escalation ? getBed(data, escalation.bedId) : null
+  const escalationBedId = escalation?.bedId ?? null
 
   const recentWork = data.recentUpdate ? getWork(data, data.recentUpdate.workId) : null
-  const recentBed = data.recentUpdate ? getBed(data, data.recentUpdate.bedId) : null
+  const recentLabel = recentWork ? contextLabelFor(data, recentWork) : null
 
   return (
     <AppShell
@@ -24,13 +24,13 @@ export function TeamScreen() {
     >
       <SectionHeader eyebrow={data.ward} title="Team" subtitle="What the ward needs to know, tied to the work — not a separate chat." />
 
-      {recentWork && recentBed && (
+      {recentWork && recentLabel && (
         <div className="team-section">
           <TeamUpdate
             kind="wardUpdate"
-            title={`${recentBed.label} ${recentWork.title.toLowerCase()} completed`}
+            title={`${recentLabel} ${recentWork.title.toLowerCase()} completed`}
             meta={`Confirmed by ${data.nurseName} · Updated just now`}
-            onClick={() => push({ name: 'careContext', bedId: recentBed.id })}
+            onClick={recentWork.bedId ? () => push({ name: 'careContext', bedId: recentWork.bedId! }) : undefined}
           />
         </div>
       )}
@@ -38,14 +38,14 @@ export function TeamScreen() {
       {wardUpdates.length > 0 && (
         <div className="team-section">
           {wardUpdates.map((item) => {
-            const bed = getBed(data, item.bedId)
+            const label = contextLabelFor(data, item)
             return (
               <TeamUpdate
                 key={item.id}
                 kind="wardUpdate"
-                title={`${bed.label} needs ${item.title.toLowerCase()}`}
+                title={`${label} needs ${item.title.toLowerCase()}`}
                 meta={`Assigned to ${item.assignedTo} · In progress`}
-                onClick={() => push({ name: 'careContext', bedId: bed.id })}
+                onClick={item.bedId ? () => push({ name: 'careContext', bedId: item.bedId! }) : undefined}
               />
             )
           })}
@@ -61,16 +61,21 @@ export function TeamScreen() {
         />
       </div>
 
-      {escalation && escalationBed && (
+      {escalation && escalationBedId && (
         <div className="team-section">
           <TeamUpdate
             kind="escalation"
-            title={`${escalationBed.label} ${escalation.title.toLowerCase()}`}
+            title={`${contextLabelFor(data, escalation)} ${escalation.title.toLowerCase()}`}
             meta="Team notified · Awaiting response"
-            onClick={() => push({ name: 'careContext', bedId: escalationBed.id })}
+            onClick={() => push({ name: 'careContext', bedId: escalationBedId })}
           />
         </div>
       )}
+
+      <button className="team-workspace-entry" onClick={() => push({ name: 'teamHome' })} type="button">
+        <div className="team-workspace-entry-title">Team Workspace</div>
+        <div className="team-workspace-entry-subtitle">See the full ward picture — unassigned work, escalations, and what the team is waiting on.</div>
+      </button>
     </AppShell>
   )
 }

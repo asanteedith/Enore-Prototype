@@ -3,6 +3,7 @@
 .start-screen {
   display: flex;
   flex-direction: column;
+  gap: var(--space-3);
   height: 100%;
   padding: var(--space-8) var(--space-6) var(--space-7);
   background: linear-gradient(180deg, var(--color-primary-strong) 0%, var(--color-primary) 60%, #0e5c56 100%);
@@ -37,6 +38,11 @@
 .start-screen .btn-primary {
   background: var(--color-text-inverse);
   color: var(--color-primary-strong);
+}
+
+.start-screen .btn-secondary {
+  border-color: rgba(244, 246, 245, 0.5);
+  color: var(--color-text-inverse);
 }
 
 /* ---------- Now screen ---------- */
