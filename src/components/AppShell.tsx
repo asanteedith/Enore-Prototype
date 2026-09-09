@@ -1,16 +1,17 @@
 import type { ReactNode } from 'react'
-import { AgentIcon, BackIcon } from './icons'
+import { AgentIcon, BackIcon, CaptureIcon } from './icons'
 
 interface Props {
   title?: string
   onBack?: () => void
   onOpenAgent?: () => void
+  onCapture?: () => void
   children: ReactNode
   footer?: ReactNode
   centerContent?: boolean
 }
 
-export function AppShell({ title, onBack, onOpenAgent, children, footer, centerContent }: Props) {
+export function AppShell({ title, onBack, onOpenAgent, onCapture, children, footer, centerContent }: Props) {
   return (
     <div className="app-shell">
       <header className="app-header">
@@ -23,6 +24,11 @@ export function AppShell({ title, onBack, onOpenAgent, children, footer, centerC
         </div>
         <div className="app-header-title">{title}</div>
         <div className="app-header-side app-header-side-right">
+          {onCapture && (
+            <button className="app-header-capture" onClick={onCapture} type="button" aria-label="Quick capture">
+              <CaptureIcon />
+            </button>
+          )}
           {onOpenAgent && (
             <button className="app-header-agent" onClick={onOpenAgent} type="button" aria-label="Workflow Agent">
               <AgentIcon />

@@ -31,6 +31,12 @@ export interface TeamActivityEntry {
 
 export type DetectedIntent = 'COMPLETED' | 'DEFERRED' | 'ESCALATED' | 'IN_PROGRESS'
 
+export interface RecentUpdate {
+  workId: string
+  bedId: string
+  timeLabel: string
+}
+
 export interface DemoData {
   nurseName: string
   ward: string
@@ -39,6 +45,7 @@ export interface DemoData {
   work: WorkItem[]
   changes: ChangeEvent[]
   teamActivity: TeamActivityEntry[]
+  recentUpdate: RecentUpdate | null
 }
 
 export type ScreenState =

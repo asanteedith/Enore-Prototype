@@ -98,10 +98,15 @@ function reducer(state: State, action: Action): State {
       )
 
       const changeText = changeTextForIntent(action.intent, bed.label, workItem.title)
-      const changes = [...state.data.changes, { id: `c-${Date.now()}`, text: changeText, timeLabel: CONFIRM_TIME_LABEL }]
+      const changes = [
+        ...state.data.changes,
+        { id: `c-${state.data.changes.length + 1}`, text: changeText, timeLabel: CONFIRM_TIME_LABEL },
+      ]
+
+      const recentUpdate = { workId: action.workId, bedId: action.bedId, timeLabel: CONFIRM_TIME_LABEL }
 
       return {
-        data: { ...state.data, work, teamActivity, changes },
+        data: { ...state.data, work, teamActivity, changes, recentUpdate },
         stack: [...state.stack, { name: 'confirmed', bedId: action.bedId, workId: action.workId }],
       }
     }
@@ -122,6 +127,7 @@ interface DemoContextValue {
   startWork: (bedId: string, workId: string) => void
   submitCapture: (bedId: string, workId: string, input: string) => void
   confirmCapture: (bedId: string, workId: string, intent: DetectedIntent, input: string) => void
+  openQuickCapture: () => void
 }
 
 const DemoContext = createContext<DemoContextValue | null>(null)
@@ -146,6 +152,21 @@ export function DemoProvider({ children }: { children: ReactNode }) {
       dispatch({ type: 'SUBMIT_CAPTURE', bedId, workId, input, intent })
     },
     confirmCapture: (bedId, workId, intent, input) => dispatch({ type: 'CONFIRM_CAPTURE', bedId, workId, intent, input }),
+    openQuickCapture: () => {
+      const inProgress =
+        state.data.work.find((w) => w.status === 'IN_PROGRESS' && w.assignedTo === state.data.nurseName) ??
+        state.data.work.find((w) => w.status === 'IN_PROGRESS')
+
+      if (inProgress) {
+        dispatch({ type: 'PUSH', screen: { name: 'capture', bedId: inProgress.bedId, workId: inProgress.id } })
+        return
+      }
+
+      const next = state.data.work.find((w) => w.status !== 'COMPLETED')
+      if (next) {
+        dispatch({ type: 'PUSH', screen: { name: 'careContext', bedId: next.bedId } })
+      }
+    },
   }
 
   return <DemoContext.Provider value={value}>{children}</DemoContext.Provider>

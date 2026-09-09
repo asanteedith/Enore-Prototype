@@ -30,31 +30,36 @@ export function CaptureInput({ value, onChange, onSubmit, placeholder }: Props) 
             type="button"
           >
             {m}
+            {m !== 'TYPE' && <span className="capture-mode-soon">Soon</span>}
           </button>
         ))}
       </div>
 
       {mode === 'TYPE' ? (
-        <textarea
-          className="capture-textarea"
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          placeholder={placeholder ?? 'What happened?'}
-          rows={3}
-          autoFocus
-        />
+        <>
+          <textarea
+            className="capture-textarea"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder ?? 'What happened?'}
+            rows={3}
+            autoFocus
+          />
+          <button className="btn btn-primary btn-full" onClick={onSubmit} disabled={value.trim().length === 0} type="button">
+            Continue
+          </button>
+        </>
       ) : (
-        <div className="capture-alt-mode">{MODE_HINTS[mode]}</div>
+        <>
+          <div className="capture-alt-mode">
+            <div className="capture-alt-mode-text">{MODE_HINTS[mode]}</div>
+            <div className="capture-alt-mode-tag">Coming soon</div>
+          </div>
+          <button className="capture-alt-mode-switch" onClick={() => setMode('TYPE')} type="button">
+            Switch to typing
+          </button>
+        </>
       )}
-
-      <button
-        className="btn btn-primary btn-full"
-        onClick={mode === 'TYPE' ? onSubmit : () => setMode('TYPE')}
-        disabled={mode === 'TYPE' && value.trim().length === 0}
-        type="button"
-      >
-        {mode === 'TYPE' ? 'Continue' : 'Use Type for this demo'}
-      </button>
     </div>
   )
 }

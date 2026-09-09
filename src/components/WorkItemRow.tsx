@@ -7,11 +7,12 @@ interface Props {
   title: string
   status: WorkStatus
   meta?: string
+  justUpdated?: boolean
   onClick?: () => void
   trailing?: ReactNode
 }
 
-export function WorkItemRow({ bedLabel, title, status, meta, onClick, trailing }: Props) {
+export function WorkItemRow({ bedLabel, title, status, meta, justUpdated, onClick, trailing }: Props) {
   const Tag = onClick ? 'button' : 'div'
   return (
     <Tag className="work-row" onClick={onClick}>
@@ -22,6 +23,7 @@ export function WorkItemRow({ bedLabel, title, status, meta, onClick, trailing }
       </div>
       <div className="work-row-trailing">
         {trailing ?? <StatusBadge status={status} />}
+        {justUpdated && <span className="just-updated-tag">Updated just now</span>}
       </div>
     </Tag>
   )

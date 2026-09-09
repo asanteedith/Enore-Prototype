@@ -74,6 +74,23 @@ export function AgentIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+export function CaptureIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Base {...props}>
+      <circle cx="12" cy="12" r="8.2" />
+      <path d="M12 8v8M8 12h8" />
+    </Base>
+  )
+}
+
+export function SendIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Base {...props}>
+      <path d="M4.5 12L19 5l-5 14-2.6-6.4L4.5 12z" />
+    </Base>
+  )
+}
+
 export function KnowledgeIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <Base {...props}>

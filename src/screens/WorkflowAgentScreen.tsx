@@ -1,13 +1,11 @@
-import { useState, type ReactNode } from 'react'
+import { useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { useDemo } from '../state/DemoContext'
 import { getBed, outstandingWork } from '../state/selectors'
 import { AppShell } from '../components/AppShell'
 import { SectionHeader } from '../components/SectionHeader'
 import { AIResponse } from '../components/AIResponse'
 import { SecondaryButton } from '../components/SecondaryButton'
-import { KnowledgeIcon } from '../components/icons'
-
-type PromptKey = 'outstanding' | 'handover'
+import { KnowledgeIcon, SendIcon } from '../components/icons'
 
 interface Turn {
   id: string
@@ -15,27 +13,46 @@ interface Turn {
   node: ReactNode
 }
 
-const PROMPTS: { key: PromptKey; text: string }[] = [
-  { key: 'outstanding', text: 'What is still outstanding?' },
-  { key: 'handover', text: 'Prepare a handover summary.' },
-]
+const SUGGESTED_PROMPTS = ['What is still outstanding?', 'Prepare a handover summary.']
+
+const FALLBACK_TEXT = 'I can help find ward work, prepare handover information, and organize outstanding items.'
+
+function classify(text: string): 'outstanding' | 'handover' | 'fallback' {
+  const t = text.toLowerCase()
+  if (t.includes('outstanding') || t.includes('remaining') || t.includes('left') || t.includes('still need')) {
+    return 'outstanding'
+  }
+  if (t.includes('handover') || t.includes('summary') || t.includes('prepare')) {
+    return 'handover'
+  }
+  return 'fallback'
+}
 
 export function WorkflowAgentScreen() {
   const { data, goBack, push } = useDemo()
   const [turns, setTurns] = useState<Turn[]>([])
-  const [asked, setAsked] = useState<Set<PromptKey>>(new Set())
+  const [draft, setDraft] = useState('')
+  const idRef = useRef(0)
 
   const outstanding = outstandingWork(data)
 
-  function ask(key: PromptKey, text: string) {
-    setAsked((prev) => new Set(prev).add(key))
+  function nextId(prefix: string) {
+    idRef.current += 1
+    return `${prefix}-${idRef.current}`
+  }
 
-    const nurseTurn: Turn = { id: `${key}-q`, from: 'nurse', node: text }
+  function respond(text: string) {
+    const trimmed = text.trim()
+    if (!trimmed) return
+
+    const kind = classify(trimmed)
 
     const response: ReactNode =
-      key === 'outstanding' ? (
+      kind === 'outstanding' ? (
         <AIResponse>
-          <div>{outstanding.length} outstanding item{outstanding.length === 1 ? '' : 's'} on the ward</div>
+          <div>
+            {outstanding.length} outstanding item{outstanding.length === 1 ? '' : 's'} on the ward
+          </div>
           <ul className="agent-outstanding-list">
             {outstanding.map((item) => (
               <li key={item.id}>
@@ -46,17 +63,30 @@ export function WorkflowAgentScreen() {
             {outstanding.length === 0 && <li>Nothing outstanding right now.</li>}
           </ul>
         </AIResponse>
-      ) : (
+      ) : kind === 'handover' ? (
         <AIResponse>
           <div>I prepared a draft from today's confirmed work.</div>
           <SecondaryButton fullWidth={false} onClick={() => push({ name: 'handover' })}>
             Review before action
           </SecondaryButton>
         </AIResponse>
+      ) : (
+        <AIResponse>
+          <div>{FALLBACK_TEXT}</div>
+        </AIResponse>
       )
 
-    const enoreTurn: Turn = { id: `${key}-a`, from: 'enore', node: response }
-    setTurns((prev) => [...prev, nurseTurn, enoreTurn])
+    setTurns((prev) => [
+      ...prev,
+      { id: nextId('q'), from: 'nurse', node: trimmed },
+      { id: nextId('a'), from: 'enore', node: response },
+    ])
+  }
+
+  function handleSubmit(e: FormEvent) {
+    e.preventDefault()
+    respond(draft)
+    setDraft('')
   }
 
   return (
@@ -78,12 +108,24 @@ export function WorkflowAgentScreen() {
       </div>
 
       <div className="agent-prompts">
-        {PROMPTS.filter((p) => !asked.has(p.key)).map((p) => (
-          <button key={p.key} className="agent-prompt-chip" onClick={() => ask(p.key, p.text)} type="button">
-            {p.text}
+        {SUGGESTED_PROMPTS.map((text) => (
+          <button key={text} className="agent-prompt-chip" onClick={() => respond(text)} type="button">
+            {text}
           </button>
         ))}
       </div>
+
+      <form className="agent-input-row" onSubmit={handleSubmit}>
+        <input
+          className="agent-input"
+          value={draft}
+          onChange={(e) => setDraft(e.target.value)}
+          placeholder="Ask the Workflow Agent…"
+        />
+        <button className="agent-send" type="submit" disabled={draft.trim().length === 0} aria-label="Ask">
+          <SendIcon />
+        </button>
+      </form>
 
       <button className="knowledge-entry" onClick={() => push({ name: 'clinicalKnowledge' })} type="button">
         <KnowledgeIcon />

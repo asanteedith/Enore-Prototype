@@ -1,4 +1,4 @@
-import type { DemoData } from './types'
+import type { DemoData, WorkItem } from './types'
 
 export function getBed(data: DemoData, bedId: string) {
   const bed = data.beds.find((b) => b.id === bedId)
@@ -26,4 +26,24 @@ export function teamActivityForBed(data: DemoData, bedId: string) {
 
 export function needsAttention(data: DemoData) {
   return data.work.filter((w) => w.status === 'TO_DO' || w.status === 'IN_PROGRESS' || w.status === 'ESCALATED')
+}
+
+export function careContextDetail(work: WorkItem | null): string {
+  if (!work) return 'No active work'
+  switch (work.status) {
+    case 'TO_DO':
+      return `${work.title} due`
+    case 'IN_PROGRESS':
+      return `${work.title} in progress`
+    case 'COMPLETED':
+      return `${work.title} completed`
+    case 'DEFERRED':
+      return `${work.title} deferred`
+    case 'ESCALATED':
+      return `${work.title} escalated`
+  }
+}
+
+export function isJustUpdated(data: DemoData, workId: string): boolean {
+  return data.recentUpdate?.workId === workId
 }

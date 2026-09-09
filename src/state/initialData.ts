@@ -51,5 +51,6 @@ export function createInitialData(): DemoData {
       { bedId: 'bed11', text: 'Ama is reviewing intake and output charts.' },
       { bedId: 'bed14', text: 'Team notified. Awaiting response from pharmacy.' },
     ],
+    recentUpdate: null,
   }
 }

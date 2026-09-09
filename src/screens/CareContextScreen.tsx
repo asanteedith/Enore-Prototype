@@ -1,5 +1,5 @@
 import { useDemo } from '../state/DemoContext'
-import { getBed, primaryWorkForBed, teamActivityForBed } from '../state/selectors'
+import { careContextDetail, getBed, isJustUpdated, primaryWorkForBed, teamActivityForBed } from '../state/selectors'
 import { AppShell } from '../components/AppShell'
 import { CareContextHeader } from '../components/CareContextHeader'
 import { PrimaryButton } from '../components/PrimaryButton'
@@ -10,26 +10,11 @@ export function CareContextScreen({ bedId }: { bedId: string }) {
   const bed = getBed(data, bedId)
   const work = primaryWorkForBed(data, bedId)
   const teamActivity = teamActivityForBed(data, bedId)
-
-  const statusDetail = (() => {
-    if (!work) return 'No active work'
-    switch (work.status) {
-      case 'TO_DO':
-        return `${work.title} due`
-      case 'IN_PROGRESS':
-        return `${work.title} in progress`
-      case 'COMPLETED':
-        return `${work.title} completed`
-      case 'DEFERRED':
-        return `${work.title} deferred`
-      case 'ESCALATED':
-        return `${work.title} escalated`
-    }
-  })()
+  const justUpdated = work ? isJustUpdated(data, work.id) : false
 
   return (
     <AppShell title={bed.label} onBack={goBack} onOpenAgent={() => push({ name: 'workflowAgent' })}>
-      <CareContextHeader bedLabel={bed.label} status={bed.status} detail={statusDetail} />
+      <CareContextHeader bedLabel={bed.label} status={bed.status} detail={careContextDetail(work)} justUpdated={justUpdated} />
 
       {work && work.status === 'COMPLETED' && (
         <div className="context-updated-meta">Last update: {work.completedAt}</div>

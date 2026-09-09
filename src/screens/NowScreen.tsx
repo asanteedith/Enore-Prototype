@@ -5,13 +5,14 @@ import { BottomNavigation } from '../components/BottomNavigation'
 import { SectionHeader } from '../components/SectionHeader'
 
 export function NowScreen() {
-  const { data, push, goTab } = useDemo()
+  const { data, push, goTab, openQuickCapture } = useDemo()
   const attention = needsAttention(data)
   const focus = attention.slice(0, 2)
 
   return (
     <AppShell
       title="Now"
+      onCapture={openQuickCapture}
       onOpenAgent={() => push({ name: 'workflowAgent' })}
       footer={<BottomNavigation active="now" onSelect={goTab} />}
     >
@@ -24,7 +25,7 @@ export function NowScreen() {
 
       <SectionHeader
         eyebrow="What matters right now"
-        title={`${attention.length} thing${attention.length === 1 ? '' : 's'} need attention`}
+        title={`${focus.length} thing${focus.length === 1 ? '' : 's'} need attention`}
       />
 
       <div className="now-focus-list">

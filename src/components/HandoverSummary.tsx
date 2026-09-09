@@ -1,7 +1,13 @@
+interface ChangeLine {
+  id: string
+  text: string
+  justUpdated?: boolean
+}
+
 interface Props {
   changesCount: number
   outstandingCount: number
-  changes: string[]
+  changes: ChangeLine[]
   outstanding: { bedLabel: string; title: string }[]
   compact?: boolean
 }
@@ -23,8 +29,9 @@ export function HandoverSummary({ changesCount, outstandingCount, changes, outst
       <div className="handover-block">
         <div className="handover-block-title">Changes</div>
         {changes.map((c) => (
-          <div key={c} className="handover-line">
-            {c}
+          <div key={c.id} className="handover-line handover-line-row">
+            <span>{c.text}</span>
+            {c.justUpdated && <span className="just-updated-tag">Just now</span>}
           </div>
         ))}
       </div>

@@ -7,7 +7,7 @@ import { HandoverSummary } from '../components/HandoverSummary'
 import { PrimaryButton } from '../components/PrimaryButton'
 
 export function HandoverScreen() {
-  const { data, goBack } = useDemo()
+  const { data, goBack, goTab } = useDemo()
   const [reviewed, setReviewed] = useState(false)
   const outstanding = outstandingWork(data).map((w) => ({ bedLabel: getBed(data, w.bedId).label, title: w.title }))
 
@@ -18,12 +18,19 @@ export function HandoverScreen() {
       <HandoverSummary
         changesCount={data.changes.length}
         outstandingCount={outstanding.length}
-        changes={data.changes.map((c) => c.text)}
+        changes={data.changes.map((c) => ({
+          id: c.id,
+          text: c.text,
+          justUpdated: data.recentUpdate !== null && c.id === data.changes[data.changes.length - 1].id,
+        }))}
         outstanding={outstanding}
       />
 
       {reviewed ? (
-        <div className="handover-reviewed">Reviewed by {data.nurseName} · Ready for shift handoff</div>
+        <>
+          <div className="handover-reviewed">✓ Handover reviewed and finalized</div>
+          <PrimaryButton onClick={() => goTab('team')}>Back to Team</PrimaryButton>
+        </>
       ) : (
         <PrimaryButton onClick={() => setReviewed(true)}>Review & finalize</PrimaryButton>
       )}
