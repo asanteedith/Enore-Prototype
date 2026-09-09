@@ -19,7 +19,7 @@ export function ConfirmedScreen({ bedId, workId }: { bedId: string; workId: stri
   const bed = getBed(data, bedId)
   const work = getWork(data, workId)
 
-  const items = [STATUS_VERB[work.status], 'Team state updated', 'Handover reflects the change']
+  const items = [STATUS_VERB[work.status], 'Team updated', 'Handover reflects the change']
 
   return (
     <AppShell title="Confirmed" centerContent>

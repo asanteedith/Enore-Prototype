@@ -22,7 +22,7 @@ export function TeamScreen() {
       onOpenAgent={() => push({ name: 'workflowAgent' })}
       footer={<BottomNavigation active="team" onSelect={goTab} />}
     >
-      <SectionHeader title="Team" subtitle="Communication stays connected to work." />
+      <SectionHeader eyebrow={data.ward} title="Team" subtitle="What the ward needs to know, tied to the work — not a separate chat." />
 
       {recentWork && recentBed && (
         <div className="team-section">

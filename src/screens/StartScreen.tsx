@@ -10,8 +10,8 @@ export function StartScreen() {
       <p className="start-screen-tagline">Spend less time on the phone.<br />More time with the patient.</p>
       <div className="start-screen-spacer" />
       <p className="start-screen-note">
-        A short walkthrough of one nursing shift moment — from noticing something, to acting, to the whole team
-        seeing it reflected automatically.
+        Follow Edith, a nurse on Medical Ward, through one moment in her shift — from noticing something, to
+        acting, to the whole team seeing it reflected automatically.
       </p>
       <PrimaryButton onClick={() => goTab('now')}>Start demo</PrimaryButton>
     </div>

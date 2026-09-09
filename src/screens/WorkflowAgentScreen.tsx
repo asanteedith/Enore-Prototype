@@ -91,7 +91,7 @@ export function WorkflowAgentScreen() {
 
   return (
     <AppShell title="Workflow Agent" onBack={goBack}>
-      <SectionHeader eyebrow="Connected to Enore's work state" title="Workflow Agent" subtitle="Find information and help get things done." />
+      <SectionHeader eyebrow="Connected to this shift's work" title="Workflow Agent" subtitle="Find what's outstanding and get handover-ready." />
 
       <div className="agent-thread">
         {turns.length === 0 && <div className="agent-empty">AI prepares. The nurse decides.</div>}
@@ -120,7 +120,7 @@ export function WorkflowAgentScreen() {
           className="agent-input"
           value={draft}
           onChange={(e) => setDraft(e.target.value)}
-          placeholder="Ask the Workflow Agent…"
+          placeholder="Ask about your shift…"
         />
         <button className="agent-send" type="submit" disabled={draft.trim().length === 0} aria-label="Ask">
           <SendIcon />

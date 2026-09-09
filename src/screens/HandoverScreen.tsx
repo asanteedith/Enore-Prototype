@@ -28,7 +28,7 @@ export function HandoverScreen() {
 
       {reviewed ? (
         <>
-          <div className="handover-reviewed">✓ Handover reviewed and finalized</div>
+          <div className="handover-reviewed">✓ Reviewed and ready for the next shift</div>
           <PrimaryButton onClick={() => goTab('team')}>Back to Team</PrimaryButton>
         </>
       ) : (
