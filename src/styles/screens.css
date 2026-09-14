@@ -1,0 +1,510 @@
+/* ---------- Start screen ---------- */
+
+.start-screen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  height: 100%;
+  padding: var(--space-8) var(--space-6) var(--space-7);
+  background: linear-gradient(180deg, var(--color-primary-strong) 0%, var(--color-primary) 60%, #0e5c56 100%);
+  color: var(--color-text-inverse);
+}
+
+.start-screen-mark {
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.start-screen-tagline {
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.3;
+  margin-top: var(--space-6);
+  letter-spacing: -0.01em;
+}
+
+.start-screen-spacer {
+  flex: 1;
+}
+
+.start-screen-note {
+  font-size: 14px;
+  line-height: 1.5;
+  opacity: 0.85;
+  margin-bottom: var(--space-5);
+}
+
+.start-screen .btn-primary {
+  background: var(--color-text-inverse);
+  color: var(--color-primary-strong);
+}
+
+.start-screen .btn-secondary {
+  border-color: rgba(244, 246, 245, 0.5);
+  color: var(--color-text-inverse);
+}
+
+/* ---------- Now screen ---------- */
+
+.now-greeting h1 {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.now-greeting p {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+.now-focus-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.now-focus-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--color-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+}
+
+.now-focus-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.now-focus-bed {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.now-focus-cta {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-urgent);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.now-focus-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.now-focus-meta {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: 4px;
+}
+
+.now-team-card {
+  display: block;
+  width: 100%;
+  text-align: left;
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4) var(--space-5);
+  margin-top: auto;
+}
+
+.now-team-card-kind {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--color-text-tertiary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.now-team-card-title {
+  font-size: 15px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+
+.now-team-card-meta {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+/* ---------- Beds screen ---------- */
+
+.bed-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.bed-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  background: var(--color-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  text-align: left;
+}
+
+.bed-row-main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.bed-row-label {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.bed-row-status {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.bed-row-context {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--color-primary);
+  text-align: right;
+  max-width: 45%;
+}
+
+/* ---------- Care context screen ---------- */
+
+.context-updated-meta {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: calc(var(--space-5) * -1);
+}
+
+.context-just-updated {
+  margin-top: 8px;
+}
+
+.context-section-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--space-2);
+}
+
+.context-work-card {
+  background: var(--color-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+}
+
+.context-work-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.context-work-title {
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.context-work-meta {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: 6px;
+}
+
+.context-empty {
+  font-size: 14px;
+  color: var(--color-text-tertiary);
+  font-style: italic;
+}
+
+.context-next-review {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  margin-top: var(--space-2);
+}
+
+.context-team-activity {
+  font-size: 14px;
+  color: var(--color-text-primary);
+}
+
+/* ---------- Capture screen ---------- */
+
+.capture-context-chip {
+  align-self: flex-start;
+  background: var(--color-primary-tint);
+  color: var(--color-primary);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.capture-question {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.capture-input-echo {
+  font-size: 16px;
+  font-style: italic;
+  color: var(--color-text-secondary);
+}
+
+.capture-trust-note {
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  margin-top: var(--space-2);
+}
+
+/* ---------- Detected screen ---------- */
+
+.detected-intent {
+  font-size: 19px;
+  font-weight: 700;
+}
+
+.detected-context {
+  font-size: 14px;
+  color: var(--color-text-secondary);
+}
+
+/* ---------- Confirmed screen ---------- */
+
+.confirmed-context-chip {
+  align-self: flex-start;
+  background: var(--color-surface-sunken);
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
+}
+
+.confirmed-actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+/* ---------- Work screen ---------- */
+
+.work-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ---------- Team screen ---------- */
+
+.team-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+/* ---------- Handover screen ---------- */
+
+.handover-reviewed {
+  background: var(--color-complete-tint);
+  color: var(--color-complete);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  padding: var(--space-4);
+  border-radius: var(--radius-md);
+}
+
+.handover-trust-note {
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+}
+
+/* ---------- Workflow agent screen ---------- */
+
+.agent-thread {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-height: 40px;
+}
+
+.agent-empty {
+  font-size: 14px;
+  color: var(--color-text-tertiary);
+  text-align: center;
+  padding: var(--space-5) 0;
+}
+
+.agent-nurse-turn {
+  align-self: flex-end;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  max-width: 85%;
+}
+
+.agent-prompts {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.agent-prompt-chip {
+  background: var(--color-surface);
+  border: 1.5px solid var(--border-strong);
+  color: var(--color-primary);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+}
+
+.agent-outstanding-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.agent-outstanding-list li {
+  display: flex;
+  flex-direction: column;
+  font-size: 14px;
+}
+
+.agent-outstanding-bed {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--color-primary);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.agent-input-row {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.agent-input {
+  flex: 1;
+  min-width: 0;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  font-size: 15px;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+}
+
+.agent-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.agent-send {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: none;
+}
+
+.agent-send:disabled {
+  background: var(--border-strong);
+  color: var(--color-text-tertiary);
+}
+
+.knowledge-entry {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  text-align: left;
+  color: var(--color-deferred);
+  margin-top: auto;
+}
+
+.knowledge-entry-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-text-primary);
+}
+
+.knowledge-entry-subtitle {
+  font-size: 12px;
+  color: var(--color-text-secondary);
+  margin-top: 2px;
+}
+
+/* ---------- Clinical knowledge screen ---------- */
+
+.knowledge-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-3);
+  background: var(--color-deferred-tint);
+  color: var(--color-text-primary);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.knowledge-panel svg {
+  color: var(--color-deferred);
+}
+
+.knowledge-input-mock input {
+  width: 100%;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  font-size: 15px;
+  background: var(--color-surface-sunken);
+  color: var(--color-text-tertiary);
+}
+
+.knowledge-trust-note {
+  text-align: center;
+  font-size: 13px;
+  color: var(--color-text-tertiary);
+  margin-top: auto;
+}
