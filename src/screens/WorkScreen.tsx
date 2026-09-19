@@ -1,47 +1,35 @@
-import { useDemo } from '../state/DemoContext'
-import { contextLabelFor, isJustUpdated, needsAttention } from '../state/selectors'
-import { AppShell } from '../components/AppShell'
-import { BottomNavigation } from '../components/BottomNavigation'
-import { SectionHeader } from '../components/SectionHeader'
-import { WorkItemRow } from '../components/WorkItemRow'
+import { useApp } from '../state/AppContext'
+import { WorkCard } from '../components/WorkCard'
+import { doneItems, nextItems, nowItems, overdueItems, waitingItems } from '../state/selectors'
 
 export function WorkScreen() {
-  const { data, push, goTab, openQuickCapture } = useDemo()
-  const attention = needsAttention(data)
+  const { state, push, completeWorkItem } = useApp()
+
+  const groups: { key: string; label: string; items: ReturnType<typeof nowItems> }[] = [
+    { key: 'now', label: 'NOW', items: nowItems(state) },
+    { key: 'next', label: 'NEXT', items: nextItems(state) },
+    { key: 'waiting', label: 'WAITING', items: waitingItems(state) },
+    { key: 'overdue', label: 'OVERDUE', items: overdueItems(state) },
+    { key: 'done', label: 'DONE', items: doneItems(state) },
+  ]
 
   return (
-    <AppShell
-      title="Work"
-      onCapture={openQuickCapture}
-      onOpenAgent={() => push({ name: 'workflowAgent' })}
-      footer={<BottomNavigation active="work" onSelect={goTab} />}
-    >
-      <SectionHeader eyebrow="Shared with the care team" title="Today" subtitle={`${data.work.length} items · ${attention.length} need attention`} />
-
-      <div className="work-list">
-        {data.work.map((item) => {
-          const label = contextLabelFor(data, item)
-          const bedId = item.bedId
-          const meta =
-            item.status === 'TO_DO'
-              ? item.dueLabel
-              : item.status === 'IN_PROGRESS'
-                ? `Being handled by ${item.assignedTo}`
-                : undefined
-
-          return (
-            <WorkItemRow
-              key={item.id}
-              bedLabel={label}
-              title={item.title}
-              status={item.status}
-              meta={meta}
-              justUpdated={isJustUpdated(data, item.id)}
-              onClick={bedId ? () => push({ name: 'careContext', bedId }) : undefined}
+    <>
+      <div className="screen-title">Work</div>
+      {groups.map((group) => (
+        <section className="home-section" key={group.key}>
+          <div className="home-section-title">{group.label}</div>
+          {group.items.length === 0 && <p className="home-empty">Nothing here.</p>}
+          {group.items.map((item) => (
+            <WorkCard
+              key={`${group.key}-${item.id}`}
+              item={item}
+              onClick={() => push({ name: 'patientDetail', patientId: item.patientId })}
+              onComplete={group.key !== 'done' ? () => completeWorkItem(item.id) : undefined}
             />
-          )
-        })}
-      </div>
-    </AppShell>
+          ))}
+        </section>
+      ))}
+    </>
   )
 }

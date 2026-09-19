@@ -1,107 +1,71 @@
-export type WorkStatus = 'TO_DO' | 'IN_PROGRESS' | 'COMPLETED' | 'DEFERRED' | 'ESCALATED'
+export type PatientId = 'P-001' | 'P-002' | 'P-003'
+
+export type WorkState = 'NOW' | 'NEXT' | 'WAITING' | 'OPEN' | 'DONE'
+
+export interface Patient {
+  id: PatientId
+  bed: string
+  age: number
+  admissionNote: string
+  allergies: string[]
+  currentState: string[]
+}
 
 export interface WorkItem {
   id: string
-  bedId: string | null
+  patientId: PatientId
   title: string
-  status: WorkStatus
-  dueLabel: string
-  assignedTo: string | null
-  startedAt: string | null
-  completedAt: string | null
-  /** Generic care-context reference for items not tied to a bed. Bed-linked items use bedId instead. */
-  contextId?: string
-  /** What this item is blocked on, e.g. "Awaiting pharmacy response". Presence means the item is waiting. */
-  waitingOn?: string
-  waitingSinceLabel?: string
-  chased?: boolean
-  escalationReason?: string
-  escalatedAtLabel?: string
-  followUpNeeded?: boolean
+  category: string
+  state: WorkState
+  owner: string
+  waitingFor?: string
+  since?: string
+  due?: string
+  note?: string
+  overdue: boolean
+  showInNow: boolean
+  completedAt?: string
 }
 
-export interface Bed {
+export interface EventEntry {
   id: string
+  patientId: PatientId
+  time: string
   label: string
-  status: string
-  nextReview: string
 }
 
-export type CareContextKind = 'bed' | 'theatre' | 'community' | 'dialysis' | 'outpatient' | 'emergency' | 'maternity'
-
-export interface CareContext {
-  id: string
-  label: string
-  kind: CareContextKind
-  status: string
+export interface PaperNote {
+  html: string
 }
 
-export interface ChangeEvent {
-  id: string
-  text: string
-  timeLabel: string
+export type PaperTarget = 'P-001' | 'P-002' | 'P-003' | 'NONE'
+
+export interface HandoverNote {
+  patientId: PatientId
+  lines: string[]
 }
 
-export interface TeamActivityEntry {
-  bedId: string
-  text: string
-}
-
-export type DetectedIntent = 'COMPLETED' | 'DEFERRED' | 'ESCALATED' | 'IN_PROGRESS'
-
-export interface RecentUpdate {
-  workId: string
-  bedId: string
-  timeLabel: string
-}
-
-export interface MeetingData {
-  id: string
-  title: string
-  dateLabel: string
-  discussion: string
-  decision: string
-  actionTitle: string
-  actionOwner: string
-  followUp: string
-  actionAdded: boolean
-}
-
-export interface DemoData {
-  nurseName: string
-  ward: string
-  shiftLabel: string
-  beds: Bed[]
-  careContexts: CareContext[]
-  work: WorkItem[]
-  changes: ChangeEvent[]
-  teamActivity: TeamActivityEntry[]
-  recentUpdate: RecentUpdate | null
-  meeting: MeetingData
-}
-
-export type Persona = 'edith' | 'ama'
-
-export type ScreenState =
+export type Screen =
   | { name: 'start' }
-  | { name: 'now' }
-  | { name: 'beds' }
-  | { name: 'careContext'; bedId: string }
-  | { name: 'capture'; bedId: string; workId: string; prefill?: string }
-  | { name: 'detected'; bedId: string; workId: string; input: string; intent: DetectedIntent }
-  | { name: 'confirmed'; bedId: string; workId: string }
+  | { name: 'home' }
+  | { name: 'patients' }
+  | { name: 'patientDetail'; patientId: PatientId }
   | { name: 'work' }
-  | { name: 'team' }
+  | { name: 'paper' }
   | { name: 'handover' }
-  | { name: 'workflowAgent'; teamMode?: boolean }
-  | { name: 'clinicalKnowledge' }
-  | { name: 'joinTeam' }
-  | { name: 'teamHome' }
-  | { name: 'teamWork' }
-  | { name: 'teamContexts' }
-  | { name: 'teamContextDetail'; contextId: string }
-  | { name: 'teamPeople' }
-  | { name: 'teamMeetings' }
+  | { name: 'handoverComplete' }
+  | { name: 'capture'; patientId?: PatientId; prefillText?: string }
 
-export type TabName = 'now' | 'beds' | 'work' | 'team'
-export type TeamTabName = 'teamHome' | 'teamWork' | 'teamContexts' | 'teamPeople'
+export interface AppState {
+  screen: Screen
+  history: Screen[]
+  nowTime: string
+  patients: Record<PatientId, Patient>
+  workItems: WorkItem[]
+  events: EventEntry[]
+  paperNotes: Record<PaperTarget, string>
+  handoverNotes: Record<PatientId, string[]>
+  handoverComplete: boolean
+  assistOpen: boolean
+  captureSuggestion: { workItemId: string; workItemTitle: string; patientId: PatientId } | null
+}

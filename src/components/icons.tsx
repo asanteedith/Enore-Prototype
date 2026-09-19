@@ -25,6 +25,46 @@ export function NowIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
+export function HomeIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Base {...props}>
+      <path d="M4 11.5L12 5l8 6.5" />
+      <path d="M6 10v8.5a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V10" />
+    </Base>
+  )
+}
+
+export function PatientsIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Base {...props}>
+      <path d="M3 18v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7" />
+      <path d="M3 15h18" />
+      <path d="M6 11V7.5A1.5 1.5 0 0 1 7.5 6H10a1.5 1.5 0 0 1 1.5 1.5V11" />
+      <path d="M3 18v2M21 18v2" />
+    </Base>
+  )
+}
+
+export function PaperIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Base {...props}>
+      <path d="M6 3.5h9l3 3v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-16a1 1 0 0 1 1-1z" />
+      <path d="M15 3.5v3h3" />
+      <path d="M8 12h8M8 15.3h8M8 8.7h4" />
+    </Base>
+  )
+}
+
+export function HandoverIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <Base {...props}>
+      <path d="M8 7.5l-4 4.5 4 4.5" />
+      <path d="M16 7.5l4 4.5-4 4.5" />
+      <path d="M10 16.5L14 7.5" />
+    </Base>
+  )
+}
+
 export function BedsIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <Base {...props}>

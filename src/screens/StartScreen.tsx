@@ -1,22 +1,24 @@
-import { useDemo } from '../state/DemoContext'
+import { useApp } from '../state/AppContext'
 import { PrimaryButton } from '../components/PrimaryButton'
-import { SecondaryButton } from '../components/SecondaryButton'
 
 export function StartScreen() {
-  const { selectPersona, push } = useDemo()
+  const { beginShift } = useApp()
 
   return (
     <div className="start-screen">
-      <div className="start-screen-mark">Enore</div>
-      <p className="start-screen-tagline">Spend less time on the phone.<br />More time with the patient.</p>
-      <div className="start-screen-spacer" />
-      <p className="start-screen-note">
-        Follow one nurse through her shift on Medical Ward, or step into the shared Team Workspace as the nurse
-        in-charge — from noticing something, to acting, to the whole team seeing it reflected automatically.
+      <div className="start-screen-mark">ENORE</div>
+      <p className="start-screen-tagline">
+        Spend more time with patients.
+        <br />
+        Less time documenting, chasing, and remembering.
       </p>
-      <PrimaryButton onClick={() => selectPersona('edith')}>Continue as Edith — Staff Nurse</PrimaryButton>
-      <PrimaryButton onClick={() => selectPersona('ama')}>Continue as Ama — Nurse In-Charge</PrimaryButton>
-      <SecondaryButton onClick={() => push({ name: 'joinTeam' })}>Join a Team Workspace</SecondaryButton>
+      <div className="start-screen-spacer" />
+      <div className="start-screen-shift">
+        <div className="start-screen-shift-row">Morning Shift · 07:00–15:00</div>
+        <div className="start-screen-shift-row">Surgical Ward</div>
+      </div>
+      <PrimaryButton onClick={beginShift}>Begin shift</PrimaryButton>
+      <p className="synthetic-note">SYNTHETIC DATA · NOT FOR CLINICAL USE</p>
     </div>
   )
 }

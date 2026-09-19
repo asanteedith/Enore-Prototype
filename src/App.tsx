@@ -1,111 +1,109 @@
 import './styles/components.css'
 import './styles/screens.css'
-import './styles/team.css'
-import { DemoProvider, useDemo } from './state/DemoContext'
+import { AppProvider, useApp } from './state/AppContext'
 import { MobileFrame } from './components/MobileFrame'
+import { AppShell } from './components/AppShell'
+import { BottomNav, type Tab } from './components/BottomNav'
+import { AssistSheet } from './components/AssistSheet'
+import { PATIENTS } from './state/initialData'
 import { StartScreen } from './screens/StartScreen'
-import { NowScreen } from './screens/NowScreen'
-import { BedsScreen } from './screens/BedsScreen'
-import { CareContextScreen } from './screens/CareContextScreen'
-import { CaptureScreen } from './screens/CaptureScreen'
-import { DetectedScreen } from './screens/DetectedScreen'
-import { ConfirmedScreen } from './screens/ConfirmedScreen'
+import { HomeScreen } from './screens/HomeScreen'
+import { PatientsScreen } from './screens/PatientsScreen'
+import { PatientDetailScreen } from './screens/PatientDetailScreen'
 import { WorkScreen } from './screens/WorkScreen'
-import { TeamScreen } from './screens/TeamScreen'
+import { PaperScreen } from './screens/PaperScreen'
 import { HandoverScreen } from './screens/HandoverScreen'
-import { WorkflowAgentScreen } from './screens/WorkflowAgentScreen'
-import { ClinicalKnowledgeScreen } from './screens/ClinicalKnowledgeScreen'
-import { JoinTeamScreen } from './screens/JoinTeamScreen'
-import { TeamHomeScreen } from './screens/TeamHomeScreen'
-import { TeamWorkScreen } from './screens/TeamWorkScreen'
-import { TeamContextsScreen } from './screens/TeamContextsScreen'
-import { TeamContextDetailScreen } from './screens/TeamContextDetailScreen'
-import { TeamPeopleScreen } from './screens/TeamPeopleScreen'
-import { TeamMeetingsScreen } from './screens/TeamMeetingsScreen'
+import { HandoverCompleteScreen } from './screens/HandoverCompleteScreen'
+import { CaptureScreen } from './screens/CaptureScreen'
 
-function DemoRouter() {
-  const { screen, reset, persona, selectPersona } = useDemo()
+const TAB_ROOTS: Record<string, Tab> = {
+  home: 'home',
+  patients: 'patients',
+  work: 'work',
+  paper: 'paper',
+  handover: 'handover',
+}
+
+function Router() {
+  const { state, goTab, push, back, openAssist, reset } = useApp()
+  const { screen } = state
 
   let content
+  let title: string | undefined
+  let onBack: (() => void) | undefined
+  let showCapture = true
+  let showAssist = true
+
   switch (screen.name) {
     case 'start':
       content = <StartScreen />
+      showCapture = false
+      showAssist = false
       break
-    case 'now':
-      content = <NowScreen />
+    case 'home':
+      content = <HomeScreen />
+      title = ''
       break
-    case 'beds':
-      content = <BedsScreen />
+    case 'patients':
+      content = <PatientsScreen />
+      title = 'Patients'
       break
-    case 'careContext':
-      content = <CareContextScreen bedId={screen.bedId} />
+    case 'patientDetail': {
+      const patient = PATIENTS[screen.patientId]
+      content = <PatientDetailScreen patientId={screen.patientId} />
+      title = patient.bed
+      onBack = back
       break
-    case 'capture':
-      content = <CaptureScreen bedId={screen.bedId} workId={screen.workId} prefill={screen.prefill} />
-      break
-    case 'detected':
-      content = <DetectedScreen bedId={screen.bedId} workId={screen.workId} input={screen.input} intent={screen.intent} />
-      break
-    case 'confirmed':
-      content = <ConfirmedScreen bedId={screen.bedId} workId={screen.workId} />
-      break
+    }
     case 'work':
       content = <WorkScreen />
+      title = 'Work'
       break
-    case 'team':
-      content = <TeamScreen />
+    case 'paper':
+      content = <PaperScreen />
+      title = 'Paper'
       break
     case 'handover':
       content = <HandoverScreen />
+      title = 'Handover'
       break
-    case 'workflowAgent':
-      content = <WorkflowAgentScreen teamMode={screen.teamMode} />
+    case 'handoverComplete':
+      content = <HandoverCompleteScreen />
+      showCapture = false
+      showAssist = false
       break
-    case 'clinicalKnowledge':
-      content = <ClinicalKnowledgeScreen />
-      break
-    case 'joinTeam':
-      content = <JoinTeamScreen />
-      break
-    case 'teamHome':
-      content = <TeamHomeScreen />
-      break
-    case 'teamWork':
-      content = <TeamWorkScreen />
-      break
-    case 'teamContexts':
-      content = <TeamContextsScreen />
-      break
-    case 'teamContextDetail':
-      content = <TeamContextDetailScreen contextId={screen.contextId} />
-      break
-    case 'teamPeople':
-      content = <TeamPeopleScreen />
-      break
-    case 'teamMeetings':
-      content = <TeamMeetingsScreen />
+    case 'capture':
+      content = <CaptureScreen patientId={screen.patientId} prefillText={screen.prefillText} />
+      title = 'Capture'
+      onBack = back
+      showCapture = false
       break
   }
 
-  const showSwitchRole = screen.name !== 'start' && screen.name !== 'joinTeam'
-  const otherPersona = persona === 'edith' ? 'ama' : 'edith'
+  const tab = TAB_ROOTS[screen.name]
+  const footer = tab ? <BottomNav active={tab} onSelect={goTab} /> : undefined
 
   return (
-    <MobileFrame
-      onReset={reset}
-      onSwitchRole={showSwitchRole ? () => selectPersona(otherPersona) : undefined}
-      switchRoleLabel={otherPersona === 'ama' ? 'Switch to Ama (Nurse In-Charge)' : 'Switch to Edith (Staff Nurse)'}
-    >
-      {content}
+    <MobileFrame onReset={reset}>
+      <AppShell
+        title={title}
+        onBack={onBack}
+        onCapture={showCapture ? () => push({ name: 'capture' }) : undefined}
+        onOpenAgent={showAssist ? openAssist : undefined}
+        footer={footer}
+      >
+        {content}
+      </AppShell>
+      <AssistSheet />
     </MobileFrame>
   )
 }
 
 function App() {
   return (
-    <DemoProvider>
-      <DemoRouter />
-    </DemoProvider>
+    <AppProvider>
+      <Router />
+    </AppProvider>
   )
 }
 

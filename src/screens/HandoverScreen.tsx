@@ -1,42 +1,91 @@
 import { useState } from 'react'
-import { useDemo } from '../state/DemoContext'
-import { contextLabelFor, outstandingWork } from '../state/selectors'
-import { AppShell } from '../components/AppShell'
-import { SectionHeader } from '../components/SectionHeader'
-import { HandoverSummary } from '../components/HandoverSummary'
-import { PrimaryButton } from '../components/PrimaryButton'
+import { useApp } from '../state/AppContext'
+import { PATIENTS } from '../state/initialData'
+import { activeItems } from '../state/selectors'
+import type { PatientId } from '../state/types'
+import { StateBadge } from '../components/StateBadge'
+
+const ORDER: PatientId[] = ['P-001', 'P-002', 'P-003']
 
 export function HandoverScreen() {
-  const { data, goBack, goTab, goTeamTab, persona } = useDemo()
-  const [reviewed, setReviewed] = useState(false)
-  const backToTeam = () => (persona === 'ama' ? goTeamTab('teamPeople') : goTab('team'))
-  const outstanding = outstandingWork(data).map((w) => ({ bedLabel: contextLabelFor(data, w), title: w.title }))
+  const { state, editHandoverLine, addHandoverLine, removeHandoverLine, completeHandover } = useApp()
+  const openWork = activeItems(state)
+  const [draft, setDraft] = useState<Record<PatientId, string>>({ 'P-001': '', 'P-002': '', 'P-003': '' })
 
   return (
-    <AppShell title="Handover" onBack={goBack}>
-      <SectionHeader eyebrow="Shift summary" title="Handover" subtitle="Prepared from the work already captured." />
+    <>
+      <div className="screen-title">Handover</div>
 
-      <HandoverSummary
-        changesCount={data.changes.length}
-        outstandingCount={outstanding.length}
-        changes={data.changes.map((c) => ({
-          id: c.id,
-          text: c.text,
-          justUpdated: data.recentUpdate !== null && c.id === data.changes[data.changes.length - 1].id,
-        }))}
-        outstanding={outstanding}
-      />
+      <section className="home-section">
+        <div className="home-section-title">My Open Work</div>
+        {openWork.length === 0 && <p className="home-empty">All work is resolved.</p>}
+        {openWork.map((item) => (
+          <div key={item.id} className="handover-open-row">
+            <div className="handover-open-row-main">
+              <span className="handover-open-row-patient">{PATIENTS[item.patientId].id}</span>
+              <span className="handover-open-row-title">{item.title}</span>
+            </div>
+            <StateBadge state={item.state} overdue={item.overdue} />
+          </div>
+        ))}
+      </section>
 
-      {reviewed ? (
-        <>
-          <div className="handover-reviewed">✓ Reviewed and ready for the next shift</div>
-          <PrimaryButton onClick={backToTeam}>Back to Team</PrimaryButton>
-        </>
-      ) : (
-        <PrimaryButton onClick={() => setReviewed(true)}>Review & finalize</PrimaryButton>
-      )}
+      <section className="home-section">
+        <div className="home-section-title">Handover Ready</div>
+        <p className="paper-intro">Grouped by patient. Edit before you complete the shift.</p>
+        {ORDER.map((id) => {
+          const patient = PATIENTS[id]
+          const lines = state.handoverNotes[id] ?? []
+          return (
+            <div key={id} className="handover-group">
+              <div className="handover-group-title">
+                {patient.id} · {patient.bed}
+              </div>
+              {lines.length === 0 && <p className="home-empty">Nothing to hand over.</p>}
+              {lines.map((line, index) => (
+                <div key={index} className="handover-line-edit">
+                  <input
+                    className="handover-line-input"
+                    value={line}
+                    onChange={(e) => editHandoverLine(id, index, e.target.value)}
+                  />
+                  <button
+                    className="handover-line-remove"
+                    type="button"
+                    aria-label="Remove line"
+                    onClick={() => removeHandoverLine(id, index)}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              <div className="handover-add-row">
+                <input
+                  className="handover-line-input"
+                  placeholder="Add a note for the next nurse"
+                  value={draft[id]}
+                  onChange={(e) => setDraft({ ...draft, [id]: e.target.value })}
+                />
+                <button
+                  className="handover-line-add"
+                  type="button"
+                  onClick={() => {
+                    if (!draft[id].trim()) return
+                    addHandoverLine(id, draft[id].trim())
+                    setDraft({ ...draft, [id]: '' })
+                  }}
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+          )
+        })}
+      </section>
 
-      <p className="handover-trust-note">Nothing is finalized without nurse review.</p>
-    </AppShell>
+      <button className="btn btn-primary btn-full" type="button" onClick={completeHandover}>
+        Complete shift
+      </button>
+    </>
   )
 }

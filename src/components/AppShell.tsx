@@ -14,6 +14,7 @@ interface Props {
 export function AppShell({ title, onBack, onOpenAgent, onCapture, children, footer, centerContent }: Props) {
   return (
     <div className="app-shell">
+      <div className="synthetic-strip">SYNTHETIC DATA · NOT FOR CLINICAL USE</div>
       <header className="app-header">
         <div className="app-header-side">
           {onBack && (
@@ -30,7 +31,7 @@ export function AppShell({ title, onBack, onOpenAgent, onCapture, children, foot
             </button>
           )}
           {onOpenAgent && (
-            <button className="app-header-agent" onClick={onOpenAgent} type="button" aria-label="Workflow Agent">
+            <button className="app-header-agent" onClick={onOpenAgent} type="button" aria-label="ENORE Assist">
               <AgentIcon />
             </button>
           )}
