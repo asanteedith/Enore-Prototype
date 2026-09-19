@@ -109,8 +109,7 @@
 }
 
 .app-header-back,
-.app-header-agent,
-.app-header-capture {
+.app-header-agent {
   width: 44px;
   height: 44px;
   display: flex;
@@ -124,9 +123,38 @@
 }
 
 .app-header-back:active,
-.app-header-agent:active,
-.app-header-capture:active {
+.app-header-agent:active {
   background: var(--color-surface-sunken);
+}
+
+/* ---------- Capture FAB ---------- */
+
+.capture-fab {
+  position: absolute;
+  right: var(--space-5);
+  bottom: 24px;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--color-primary);
+  color: var(--color-text-inverse);
+  border: none;
+  border-radius: var(--radius-pill);
+  padding: 14px 22px 14px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  box-shadow: var(--shadow-raised);
+}
+
+.capture-fab:active {
+  transform: scale(0.97);
+  background: var(--color-primary-strong);
+}
+
+.app-shell-has-footer .capture-fab {
+  bottom: 86px;
 }
 
 .app-content {
@@ -134,7 +162,7 @@
   min-height: 0;
   min-width: 0;
   overflow-y: auto;
-  padding: var(--space-2) var(--space-5) var(--space-7);
+  padding: var(--space-2) var(--space-5) 92px;
   display: flex;
   flex-direction: column;
   gap: var(--space-5);

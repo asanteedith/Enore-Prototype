@@ -82,13 +82,14 @@ function Router() {
 
   const tab = TAB_ROOTS[screen.name]
   const footer = tab ? <BottomNav active={tab} onSelect={goTab} /> : undefined
+  const capturePatientId = screen.name === 'patientDetail' ? screen.patientId : undefined
 
   return (
     <MobileFrame onReset={reset}>
       <AppShell
         title={title}
         onBack={onBack}
-        onCapture={showCapture ? () => push({ name: 'capture' }) : undefined}
+        onCapture={showCapture ? () => push({ name: 'capture', patientId: capturePatientId }) : undefined}
         onOpenAgent={showAssist ? openAssist : undefined}
         footer={footer}
       >

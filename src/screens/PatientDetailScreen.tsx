@@ -6,7 +6,7 @@ import { StateBadge } from '../components/StateBadge'
 import { elapsedSince } from '../state/time'
 
 export function PatientDetailScreen({ patientId }: { patientId: PatientId }) {
-  const { state, push, completeWorkItem } = useApp()
+  const { state, completeWorkItem } = useApp()
   const patient = PATIENTS[patientId]
   const items = itemsForPatient(state, patientId)
   const events = eventsForPatient(state, patientId).slice().reverse()
@@ -85,10 +85,6 @@ export function PatientDetailScreen({ patientId }: { patientId: PatientId }) {
           </ul>
         )}
       </section>
-
-      <button className="btn btn-secondary btn-full" type="button" onClick={() => push({ name: 'capture', patientId })}>
-        Capture update for {patient.id}
-      </button>
     </>
   )
 }
