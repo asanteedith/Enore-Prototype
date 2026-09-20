@@ -1,14 +1,12 @@
 import { useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { PATIENTS } from '../state/initialData'
-import { activeItems } from '../state/selectors'
+import { activeItems, handoverLinesForPatient, PATIENT_ORDER } from '../state/selectors'
 import type { PatientId } from '../state/types'
 import { StateBadge } from '../components/StateBadge'
 
-const ORDER: PatientId[] = ['P-001', 'P-002', 'P-003']
-
 export function HandoverScreen() {
-  const { state, editHandoverLine, addHandoverLine, removeHandoverLine, completeHandover } = useApp()
+  const { state, toggleHandoverItem, addHandoverNote, removeHandoverNote, completeHandover } = useApp()
   const openWork = activeItems(state)
   const [draft, setDraft] = useState<Record<PatientId, string>>({ 'P-001': '', 'P-002': '', 'P-003': '' })
 
@@ -25,35 +23,38 @@ export function HandoverScreen() {
               <span className="handover-open-row-patient">{PATIENTS[item.patientId].id}</span>
               <span className="handover-open-row-title">{item.title}</span>
             </div>
-            <StateBadge state={item.state} overdue={item.overdue} />
+            <StateBadge state={item.state} />
           </div>
         ))}
       </section>
 
       <section className="home-section">
         <div className="home-section-title">Handover Ready</div>
-        <p className="paper-intro">Grouped by patient. Edit before you complete the shift.</p>
-        {ORDER.map((id) => {
+        <p className="paper-intro">
+          Generated from live work state. Completed work never appears here — remove a line only if it shouldn't
+          carry into handover.
+        </p>
+        {PATIENT_ORDER.map((id) => {
           const patient = PATIENTS[id]
-          const lines = state.handoverNotes[id] ?? []
+          const lines = handoverLinesForPatient(state, id)
           return (
             <div key={id} className="handover-group">
               <div className="handover-group-title">
                 {patient.id} · {patient.bed}
               </div>
               {lines.length === 0 && <p className="home-empty">Nothing to hand over.</p>}
-              {lines.map((line, index) => (
-                <div key={index} className="handover-line-edit">
-                  <input
-                    className="handover-line-input"
-                    value={line}
-                    onChange={(e) => editHandoverLine(id, index, e.target.value)}
-                  />
+              {lines.map((line) => (
+                <div key={line.id} className={`handover-line-row ${line.derived ? 'handover-line-derived' : ''}`}>
+                  <span className="handover-line-text">{line.text}</span>
                   <button
                     className="handover-line-remove"
                     type="button"
-                    aria-label="Remove line"
-                    onClick={() => removeHandoverLine(id, index)}
+                    aria-label="Remove from handover"
+                    onClick={() =>
+                      line.derived && line.itemId
+                        ? toggleHandoverItem(line.itemId)
+                        : removeHandoverNote(id, Number(line.id.split('-').pop()))
+                    }
                   >
                     ×
                   </button>
@@ -71,7 +72,7 @@ export function HandoverScreen() {
                   type="button"
                   onClick={() => {
                     if (!draft[id].trim()) return
-                    addHandoverLine(id, draft[id].trim())
+                    addHandoverNote(id, draft[id].trim())
                     setDraft({ ...draft, [id]: '' })
                   }}
                 >

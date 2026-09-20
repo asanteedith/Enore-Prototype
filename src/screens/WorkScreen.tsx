@@ -1,16 +1,16 @@
 import { useApp } from '../state/AppContext'
 import { WorkCard } from '../components/WorkCard'
-import { doneItems, nextItems, nowItems, overdueItems, waitingItems } from '../state/selectors'
+import { completedItems, interruptedItems, myActionItems, waitingOnOthers, watchingItems } from '../state/selectors'
 
 export function WorkScreen() {
-  const { state, push, completeWorkItem } = useApp()
+  const { state } = useApp()
 
-  const groups: { key: string; label: string; items: ReturnType<typeof nowItems> }[] = [
-    { key: 'now', label: 'NOW', items: nowItems(state) },
-    { key: 'next', label: 'NEXT', items: nextItems(state) },
-    { key: 'waiting', label: 'WAITING', items: waitingItems(state) },
-    { key: 'overdue', label: 'OVERDUE', items: overdueItems(state) },
-    { key: 'done', label: 'DONE', items: doneItems(state) },
+  const groups = [
+    { key: 'mine', label: 'MY ACTIONS', items: myActionItems(state) },
+    { key: 'waiting', label: 'WAITING ON OTHERS', items: waitingOnOthers(state) },
+    { key: 'watching', label: 'WATCHING', items: watchingItems(state) },
+    { key: 'interrupted', label: 'INTERRUPTED / RESUME', items: interruptedItems(state) },
+    { key: 'completed', label: 'COMPLETED', items: completedItems(state) },
   ]
 
   return (
@@ -21,12 +21,7 @@ export function WorkScreen() {
           <div className="home-section-title">{group.label}</div>
           {group.items.length === 0 && <p className="home-empty">Nothing here.</p>}
           {group.items.map((item) => (
-            <WorkCard
-              key={`${group.key}-${item.id}`}
-              item={item}
-              onClick={() => push({ name: 'patientDetail', patientId: item.patientId })}
-              onComplete={group.key !== 'done' ? () => completeWorkItem(item.id) : undefined}
-            />
+            <WorkCard key={`${group.key}-${item.id}`} item={item} />
           ))}
         </section>
       ))}

@@ -1,14 +1,14 @@
 import { useState } from 'react'
 import { useApp } from '../state/AppContext'
 import { PATIENTS } from '../state/initialData'
-import { activeItems, overdueItems, waitingItems } from '../state/selectors'
+import { activeItems, dueStatusFor, handoverLinesForPatient, PATIENT_ORDER, waitingOnOthers } from '../state/selectors'
 
 const PROMPTS = ['Show me what is still open', "What's waiting?", "What's overdue?", 'Handover summary'] as const
 
 function answerFor(prompt: string, state: ReturnType<typeof useApp>['state']): string {
   const open = activeItems(state)
-  const waiting = waitingItems(state)
-  const overdue = overdueItems(state)
+  const waiting = waitingOnOthers(state)
+  const overdue = open.filter((i) => dueStatusFor(state, i) === 'OVERDUE')
 
   const lineFor = (item: (typeof open)[number]) => `${PATIENTS[item.patientId].id} ${item.title.toLowerCase()}`
 
@@ -18,17 +18,16 @@ function answerFor(prompt: string, state: ReturnType<typeof useApp>['state']): s
   }
   if (prompt === "What's waiting?") {
     if (waiting.length === 0) return 'Nothing is waiting on anyone.'
-    return waiting.map((i) => `- ${lineFor(i)} — waiting for ${i.waitingFor}`).join('\n')
+    return waiting.map((i) => `- ${lineFor(i)}${i.owner !== 'Me' ? ` — ${i.owner}` : ''}`).join('\n')
   }
   if (prompt === "What's overdue?") {
     if (overdue.length === 0) return 'Nothing is overdue.'
     return overdue.map((i) => `- ${lineFor(i)}`).join('\n')
   }
   if (prompt === 'Handover summary') {
-    const patients = Object.keys(state.handoverNotes) as (keyof typeof state.handoverNotes)[]
-    const parts = patients
-      .filter((id) => (state.handoverNotes[id] ?? []).length > 0)
-      .map((id) => `${PATIENTS[id].id}: ${(state.handoverNotes[id] ?? []).join('; ')}`)
+    const parts = PATIENT_ORDER.map((id) => ({ id, lines: handoverLinesForPatient(state, id) }))
+      .filter((g) => g.lines.length > 0)
+      .map((g) => `${PATIENTS[g.id].id}: ${g.lines.map((l) => l.text).join('; ')}`)
     return parts.length > 0 ? parts.join('\n') : 'Nothing to hand over yet.'
   }
   return "I can only help organize what's already in your workflow — I don't diagnose or recommend treatment."

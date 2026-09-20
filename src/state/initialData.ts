@@ -13,7 +13,6 @@ export const PATIENTS: Record<PatientId, Patient> = {
       'Wound dry',
       'Eating and drinking',
       'Cannula — left hand',
-      'Observations 6-hourly · last taken 06:00',
     ],
   },
   'P-002': {
@@ -28,7 +27,6 @@ export const PATIENTS: Record<PatientId, Patient> = {
       'Morphine given 05:15',
       'Temperature 37.9°C at 06:00',
       'NPO',
-      'IV fluids running — 1L / 8h',
       'Catheter draining',
     ],
   },
@@ -42,14 +40,37 @@ export const PATIENTS: Record<PatientId, Patient> = {
       'NPO since midnight',
       'Anxious',
       'Asking when she will be seen',
-      'Consent not signed',
-      'Bloods taken 04:00 — results pending',
       'Possible theatre later if surgeon agrees',
     ],
   },
 }
 
 export const INITIAL_WORK_ITEMS: WorkItem[] = [
+  // --- P-001 : Me, not yet started ---
+  {
+    id: 'p001-observations',
+    patientId: 'P-001',
+    title: 'Morning observations',
+    category: 'Observations',
+    state: 'OPEN',
+    owner: 'Me',
+    dueAt: '12:00',
+    note: '6-hourly · last taken 06:00',
+    completeLabel: 'Record observations done',
+  },
+  {
+    id: 'p001-mobilisation',
+    patientId: 'P-001',
+    title: 'Mobilisation',
+    category: 'Physiotherapy',
+    state: 'OPEN',
+    owner: 'Me',
+    dueNote: 'Today',
+    note: 'Physiotherapy asked her to walk this morning',
+    completeLabel: 'Record mobilised',
+  },
+
+  // --- P-002 : waiting on doctor, no real due time — must never read OVERDUE ---
   {
     id: 'p002-wound-review',
     patientId: 'P-002',
@@ -60,32 +81,44 @@ export const INITIAL_WORK_ITEMS: WorkItem[] = [
     waitingFor: 'Doctor',
     since: '05:30',
     note: 'Requested by night nurse',
-    overdue: true,
-    showInNow: true,
+    escalationRule: { afterMinutes: 60, label: 'Consider escalating to charge nurse' },
+  },
+  // --- P-002 : the nurse's own task — this is the interruption/resume demo item ---
+  {
+    id: 'p002-wound-assessment',
+    patientId: 'P-002',
+    title: 'Wound assessment',
+    category: 'Assessment',
+    state: 'OPEN',
+    owner: 'Me',
+    supportsInProgress: true,
+    startLabel: 'Start assessment',
+    completeLabel: 'Complete assessment',
+    nextAction: 'Inspect wound',
   },
   {
-    id: 'p002-iv-fluids-review',
+    id: 'p002-iv-fluids',
     patientId: 'P-002',
     title: 'IV fluids review',
-    category: 'Medication / fluids',
-    state: 'NEXT',
+    category: 'Fluids',
+    state: 'WATCHING',
     owner: 'Me',
-    note: 'Ongoing',
-    overdue: false,
-    showInNow: false,
+    since: '07:00',
+    note: 'Running 1L / 8h',
   },
+
+  // --- P-003 : result lifecycle + dependency chain ---
   {
-    id: 'p003-blood-results',
+    id: 'p003-blood-result',
     patientId: 'P-003',
-    title: 'Blood results',
+    title: 'Blood result',
     category: 'Investigation',
     state: 'WAITING',
     owner: 'Lab',
-    waitingFor: 'Lab result',
+    waitingFor: 'Lab',
     since: '04:00',
-    note: 'Taken 04:00 · pending',
-    overdue: false,
-    showInNow: true,
+    note: 'Taken 04:00',
+    resultStage: 'WAITING',
   },
   {
     id: 'p003-theatre-decision',
@@ -94,10 +127,8 @@ export const INITIAL_WORK_ITEMS: WorkItem[] = [
     category: 'Plan',
     state: 'OPEN',
     owner: 'Surgeon',
-    waitingFor: 'Surgeon',
+    dependsOn: 'p003-blood-result',
     note: 'Pending surgeon review',
-    overdue: false,
-    showInNow: false,
   },
   {
     id: 'p003-consent',
@@ -107,33 +138,11 @@ export const INITIAL_WORK_ITEMS: WorkItem[] = [
     state: 'OPEN',
     owner: 'Me',
     note: 'Not yet signed',
-    overdue: false,
-    showInNow: false,
-  },
-  {
-    id: 'p001-observations',
-    patientId: 'P-001',
-    title: 'Morning observations',
-    category: 'Observations',
-    state: 'NEXT',
-    owner: 'Me',
-    due: '12:00',
-    overdue: false,
-    showInNow: false,
-  },
-  {
-    id: 'p001-mobilisation',
-    patientId: 'P-001',
-    title: 'Mobilisation',
-    category: 'Physiotherapy',
-    state: 'NEXT',
-    owner: 'Me',
-    due: 'Today',
-    note: 'Physiotherapy asked her to walk this morning',
-    overdue: false,
-    showInNow: false,
+    completeLabel: 'Record signed',
   },
 ]
+
+export const SYNTHETIC_BLOOD_RESULT_NOTE = 'FBC: WBC 11.2, Hb 13.1, Platelets 240 — no critical flags.'
 
 export const INITIAL_EVENTS: EventEntry[] = [
   { id: 'e1', patientId: 'P-002', time: '07:00', label: 'Morning shift started' },
@@ -143,9 +152,3 @@ export const INITIAL_EVENTS: EventEntry[] = [
   { id: 'e5', patientId: 'P-002', time: '05:00', label: 'Pain 7/10' },
   { id: 'e6', patientId: 'P-003', time: '04:00', label: 'Bloods taken' },
 ]
-
-export const INITIAL_HANDOVER_NOTES: Record<PatientId, string[]> = {
-  'P-001': ['Mobilisation requested — physiotherapy asked her to walk this morning'],
-  'P-002': ['Doctor wound review still unresolved', 'Pain management follow-up'],
-  'P-003': ['Blood result pending', 'Theatre decision pending', 'Consent not signed'],
-}

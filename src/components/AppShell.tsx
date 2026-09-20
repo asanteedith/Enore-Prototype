@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { AgentIcon, BackIcon } from './icons'
 import { CaptureFAB } from './CaptureFAB'
+import { ConnectivityIndicator } from './ConnectivityIndicator'
 
 interface Props {
   title?: string
@@ -10,12 +11,16 @@ interface Props {
   children: ReactNode
   footer?: ReactNode
   centerContent?: boolean
+  showConnectivity?: boolean
 }
 
-export function AppShell({ title, onBack, onOpenAgent, onCapture, children, footer, centerContent }: Props) {
+export function AppShell({ title, onBack, onOpenAgent, onCapture, children, footer, centerContent, showConnectivity = true }: Props) {
   return (
     <div className={`app-shell ${footer ? 'app-shell-has-footer' : ''}`}>
-      <div className="synthetic-strip">SYNTHETIC DATA · NOT FOR CLINICAL USE</div>
+      <div className="synthetic-strip">
+        <span>SYNTHETIC DATA · NOT FOR CLINICAL USE</span>
+        {showConnectivity && <ConnectivityIndicator />}
+      </div>
       <header className="app-header">
         <div className="app-header-side">
           {onBack && (

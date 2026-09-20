@@ -1,6 +1,6 @@
 import { useApp } from '../state/AppContext'
 import { PATIENTS } from '../state/initialData'
-import { itemsForPatient } from '../state/selectors'
+import { dueStatusFor, itemsForPatient } from '../state/selectors'
 import type { PatientId } from '../state/types'
 
 const ORDER: PatientId[] = ['P-001', 'P-002', 'P-003']
@@ -14,9 +14,9 @@ export function PatientsScreen() {
       <div className="patients-list">
         {ORDER.map((id) => {
           const patient = PATIENTS[id]
-          const items = itemsForPatient(state, id).filter((w) => w.state !== 'DONE')
-          const waiting = items.filter((w) => w.state === 'WAITING').length
-          const overdue = items.filter((w) => w.overdue).length
+          const items = itemsForPatient(state, id).filter((w) => w.state !== 'COMPLETED')
+          const waiting = items.filter((w) => w.state === 'WAITING' || (w.state === 'OPEN' && w.owner !== 'Me')).length
+          const overdue = items.filter((w) => dueStatusFor(state, w) === 'OVERDUE').length
           return (
             <button
               key={id}

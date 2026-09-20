@@ -33,12 +33,14 @@ function Router() {
   let onBack: (() => void) | undefined
   let showCapture = true
   let showAssist = true
+  let showConnectivity = true
 
   switch (screen.name) {
     case 'start':
       content = <StartScreen />
       showCapture = false
       showAssist = false
+      showConnectivity = false
       break
     case 'home':
       content = <HomeScreen />
@@ -71,9 +73,10 @@ function Router() {
       content = <HandoverCompleteScreen />
       showCapture = false
       showAssist = false
+      showConnectivity = false
       break
     case 'capture':
-      content = <CaptureScreen patientId={screen.patientId} prefillText={screen.prefillText} />
+      content = <CaptureScreen patientId={screen.patientId} prefillText={screen.prefillText} source={screen.source} />
       title = 'Capture'
       onBack = back
       showCapture = false
@@ -92,6 +95,7 @@ function Router() {
         onCapture={showCapture ? () => push({ name: 'capture', patientId: capturePatientId }) : undefined}
         onOpenAgent={showAssist ? openAssist : undefined}
         footer={footer}
+        showConnectivity={showConnectivity}
       >
         {content}
       </AppShell>

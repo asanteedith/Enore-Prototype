@@ -41,6 +41,7 @@ export function PaperScreen() {
       name: 'capture',
       patientId: target === 'NONE' ? undefined : target,
       prefillText: text,
+      source: 'paper',
     })
   }
 
